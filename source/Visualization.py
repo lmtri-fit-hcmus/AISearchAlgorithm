@@ -1,16 +1,16 @@
 #source code to make video display:
 #https://www.youtube.com/watch?v=JtiK0DOeI4A
 
+from time import sleep
+from turtle import width
+from typing import List
 from numpy import mat
 import pygame
 import math
 from queue import PriorityQueue
-from main import read_file
 
-WIDTH = 800
-HEIGHT = 800
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("A* Pathfinding")
+HEIGHT = 500
+
 
 RED = (255,0,0)
 GREEN = (0,255,0)
@@ -23,15 +23,16 @@ GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
 
 class Spot:
-    def __init__(self, row, col, width, total_rows):
+    def __init__(self, row, col, width, total_rows,total_cols):
         self.row = row
         self.col = col
-        self.x = row *width
-        self.y = col * width
+        self.x = col * width
+        self.y = row * width
         self.colour =  WHITE
         self.neighbours = []
         self.width = width
         self.total_rows = total_rows
+        self.total_cols = total_cols
 
     def get_pos(self):
         return self.row, self.col
@@ -46,10 +47,10 @@ class Spot:
         return self.colour == BLACK
 
     def is_start(self):
-        return self.colour == ORANGE
+        return self.colour == YELLOW
 
     def is_end(self):
-        return self.colour == TURQUOISE
+        return self.colour == RED
 
     def reset(self):
         self.colour = WHITE
@@ -74,13 +75,15 @@ class Spot:
 
     def update_neighbours(self, grid):
         self.neighbours = []
+        if(self.row == 2 and self.col == 10):
+            print(1)
         if self.row < self.total_rows - 1 and not grid[self.row +1][self.col].is_barrier():  #DOWN
             self.neighbours.append(grid[self.row +1][self.col])
 
         if self.row > 0 and not grid[self.row - 1][self.col].is_barrier():   # UP
             self.neighbours.append(grid[self.row -1][self.col])
 
-        if self.col < self.total_rows - 1 and not grid[self.row][self.col+ 1].is_barrier():  #RIGHT
+        if self.col < self.total_cols - 1 and not grid[self.row][self.col+ 1].is_barrier():  #RIGHT
             self.neighbours.append(grid[self.row ][self.col+1])
 
         if self.col > 0 and not grid[self.row][self.col - 1].is_barrier():  #RIGHT
@@ -91,15 +94,15 @@ class Spot:
 
     def make_start(self):
         self.colour = ORANGE
-def reconstruct_path(came_from, current, draw):
-    while current in came_from:
-        current = came_from[current]
+def reconstruct_path(came_from: list, draw):
+    i = 0
+    for current in came_from:
+        current = came_from[len(came_from)-1-i]
+        print((current.row, current.col))
         current.make_path()
+        sleep(0.01)
+        i+=1
         draw()
-def h(p1, p2):
-    x1, y1 = p1
-    x2, y2 = p2
-    return abs(x1-x2) + abs(y1-y2)
 
 def algorithm(draw, grid, start, end):
     count = 0
@@ -144,22 +147,23 @@ def algorithm(draw, grid, start, end):
 
 
 
-def make_grid(rows, width):
+def make_grid(cols,rows):
     grid = []
-    gap = HEIGHT // 21
+    gap = HEIGHT // rows
+    
     for i in range(rows):
         grid.append([])
-        for j in range(rows):
-            spot = Spot(i, j, gap, rows)
+        for j in range(cols):
+            spot = Spot(i, j, gap, rows,cols)
             grid[i].append(spot)
 
-    return grid
+    return gap*rows, gap * cols, grid
 
-def draw_grid(win, rows, width):
-    gap = width //rows
+def draw_grid(win, cols, rows, width):
+    gap = width //cols
     for i in range(rows):
         pygame.draw.line(win, GREY, (0, i*gap),(width, i*gap))
-        for j in range(rows):
+        for j in range(cols):
             pygame.draw.line(win, GREY, (j* gap, 0), (j* gap,width))
 
 def draw(win, grid, rows, width):
@@ -168,78 +172,20 @@ def draw(win, grid, rows, width):
         for spot in row:
             spot.draw(win)
 
-    draw_grid(win, rows, width)
+    draw_grid(win, len(grid[0]), rows, width)
     pygame.display.update()
 
-def get_clicked_pos(pos, rows, width):
-    gap = width //rows
-    y,x = pos
-
-    row = y//gap
-    col = x//gap
-    return row, col
-
-def main(win, width):
-
-    file_name = "./input/maze_map.txt"
-    bonus_points, matrix = read_file(file_name)
-    ROWS = len(matrix)
-    grid = make_grid(ROWS, width)
-    start = None
-    end = None
-    run = True
-    started = False
-
-                
-    while run:
-        draw(win, grid, ROWS, width)
-        for i in range(len(matrix)-1):
-            for j in range(len(matrix[i])-1):
-                if(matrix[i][j] == 'x'):
-                    grid[i][j].make_barrier()
-        for event in pygame.event.get():
-            if event.type ==pygame.QUIT:
-                run = False
-            if started:
-                continue
-            if pygame.mouse.get_pressed()[0]:  # left mouse button
-                pos = pygame.mouse.get_pos()
-                row, col = get_clicked_pos(pos, ROWS, width)
-                spot = grid[row][col]
-                if not start and  spot != end:
-                    start = spot
-                    start.make_start()
-
-                elif not end and spot != start:
-                    end = spot
-                    end.make_end()
-                elif spot != end and spot != start:
-                    spot.make_barrier()
-
-            elif pygame.mouse.get_pressed()[2]:
-                pos = pygame.mouse.get_pos()
-                row, col = get_clicked_pos(pos, ROWS, width)
-                spot = grid[row][col]
-                spot.reset()
-                if spot ==start:
-                    start = None
-                elif spot == end:
-                    end = None
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and not started:
-                    for row in grid:
-                        for spot in row:
-                            spot.update_neighbours(grid)
-                    algorithm(lambda: draw(win, grid, ROWS, width), grid, start, end)   #having lambda lets you run the function inside the function
-
-                if event.key == pygame.K_c:
-                    start = None
-                    end = None
-                    grid = make_grid(ROWS, width)
-
-
-    pygame.quit()
-
-
-main(WIN, WIDTH)
+def isExit(rows,cols,matrix):
+    if(cols == 0 and matrix[rows][cols] == ' '):
+        if(matrix[rows][cols+1] != 'x'):
+            return 1
+    if(cols == len(matrix[0])-1 and matrix[rows][cols] == ' '):
+        if(matrix[rows][cols-1] != 'x'):
+            return 1
+    if(rows == 0 and matrix[rows][cols] == ' '):
+        if(matrix[rows+1][cols] != 'x'):
+            return 1
+    if(rows == len(matrix)-1 and matrix[rows][cols] == ' '):
+        if(matrix[rows-1][cols] != 'x'):
+            return 1
+    return 0

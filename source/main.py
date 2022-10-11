@@ -1,122 +1,96 @@
-# with open('maze_map.txt', 'w') as outfile:
-#   outfile.write('2\n')
-#   outfile.write('3 6 -3\n')
-#   outfile.write('5 14 -1\n')
-#   outfile.write('xxxxxxxxxxxxxxxxxxxxxx\n')
-#   outfile.write('x   x   xx xx        x\n')
-#   outfile.write('x     x     xxxxxxxxxx\n')
-#   outfile.write('x x   +xx  xxxx xxx xx\n')
-#   outfile.write('  x   x x xx   xxxx  x\n')
-#   outfile.write('x          xx +xx  x x\n')
-#   outfile.write('xxxxxxx x      xx  x x\n')
-#   outfile.write('xxxxxxxxx  x x  xx   x\n')
-#   outfile.write('x          x x Sx x  x\n')
-#   outfile.write('xxxxx x  x x x     x x\n')
-#   outfile.write('xxxxxxxxxxxxxxxxxxxxxx')
+from operator import ne
+from time import sleep
+from Helper import *
+from Visualization import *
+import sys
+import pygame.camera
 
-from fileinput import filename
-import imp
-import os
-import matplotlib.pyplot as plt
-from DFS import DFS
+def DFS(draw, grid , start: Spot, exit: Spot):
+    stack = [(start,[start])]
+    visited = []
+    currentVertex = start
+    while stack:
+        currentVertex, path = stack.pop()
 
+        currentVertex.make_open()
+        if(currentVertex not in visited):
+            if currentVertex == exit:
+                break
+            visited.append(currentVertex)
+            for neig in currentVertex.neighbours:
+                if(neig not in visited):
+                    stack.append((neig,path+[neig]))
+                    neig.make_open()
+                    sleep(0.01)
+                    draw()  
+    if(stack):
+        reconstruct_path(path, draw)
+    return []
 
-def visualize_maze(matrix, bonus, start, end, file_name, route):
-    """
-    Args:
-      1. matrix: The matrix read from the input file,
-      2. bonus: The array of bonus points,
-      3. start, end: The starting and ending points,
-      4. route: The route from the starting point to the ending one, defined by an array of (x, y), e.g. route = [(1, 2), (1, 3), (1, 4)]
-    """
-    # 1. Define walls and array of direction based on the route
-    walls = [(i, j) for i in range(len(matrix))
-             for j in range(len(matrix[0])) if matrix[i][j] == 'x']
+def BFS(draw, grid , start: Spot, exit: Spot):
+    queue = [(start,[start])]
+    visited = []
+    while(queue):
+        currentVertex, path = queue.pop(0)
+        if currentVertex == exit:
+            break
+        for neig in currentVertex.neighbours:
+            if neig not in visited:
+                queue.append((neig, path+[neig]))
+                visited.append(neig)
+                neig.make_open()
+                sleep(0.01)
+                draw()
+    if(start):
+        reconstruct_path(path, draw)
+    return []
 
-    if route:
-        direction = []
-        for i in range(1, len(route)):
-            if route[i][0]-route[i-1][0] > 0:
-                direction.append('v')  # ^
-            elif route[i][0]-route[i-1][0] < 0:
-                direction.append('^')  # v
-            elif route[i][1]-route[i-1][1] > 0:
-                direction.append('>')
-            else:
-                direction.append('<')
+def main():
+    #init pygame
+    pygame.init()
+    pygame.camera.init()
+    
 
-        direction.pop(0)
-
-    # 2. Drawing the map
-    ax = plt.figure(dpi=100).add_subplot(111)
-
-    for i in ['top', 'bottom', 'right', 'left']:
-        ax.spines[i].set_visible(False)
-
-    plt.scatter([i[1] for i in walls], [-i[0] for i in walls],
-                marker='X', s=100, color='black')
-
-    plt.scatter([i[1] for i in bonus], [-i[0] for i in bonus],
-                marker='P', s=100, color='green')
-
-    plt.scatter(start[1], -start[0], marker='*',
-                s=100, color='gold')
-
-    if route:
-        for i in range(len(route)-2):
-            plt.scatter(route[i+1][1], -route[i+1][0],
-                        marker=direction[i], color='silver')
-
-    plt.text(end[1], -end[0], 'EXIT', color='red',
-             horizontalalignment='center',
-             verticalalignment='center')
-    plt.xticks([])
-    plt.yticks([])
-
-    file_name = "./output/" + file_name.split("./input/", 2)[1] + "DFS.jpg"
-    plt.savefig(file_name, bbox_inches='tight')
-
-    plt.show()
-
-    print(f'Starting point (x, y) = {start[0], start[1]}')
-    print(f'Ending point (x, y) = {end[0], end[1]}')
-
-    for _, point in enumerate(bonus):
-        print(
-            f'Bonus point at position (x, y) = {point[0], point[1]} with point {point[2]}')
-
-
-def read_file(file_name: str = 'maze.txt'):
-    f = open(file_name, 'r')
-    n_bonus_points = int(next(f)[:-1])
-    bonus_points = []
-    for i in range(n_bonus_points):
-        x, y, reward = map(int, next(f)[:-1].split(' '))
-        bonus_points.append((x, y, reward))
-
-    text = f.read()
-    matrix = [list(i) for i in text.splitlines()]
-    f.close()
-
-    return bonus_points, matrix
-
-
-def main(file_name):
+    #Get matrix, bonus point, start, end
+    file_name = "./input/maze_map.txt"
     bonus_points, matrix = read_file(file_name)
-    for i in range(len(matrix)):
-        for j in range(len(matrix[0])):
-            if matrix[i][j] == 'S':
-                start = (i, j)
+    ROWS = len(matrix)
+    COLS = len(matrix[0])
+    HEIGHT, WIDTH, grid = make_grid(COLS, ROWS)
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Pathfinding")
+    run = True
+    started = False
 
-            elif matrix[i][j] == ' ':
-                if (i == 0) or (i == len(matrix)-1) or (j == 0) or (j == len(matrix[0])-1):
-                    end = (i, j)
+                
+    while run:
+        width = WIDTH
+        draw(WIN, grid, ROWS, width)
+        for rows in range(len(matrix)):
+            for cols in range(len(matrix[rows])):
+                if(matrix[rows][cols] == 'x'):
+                    grid[rows][cols].make_barrier()
+                if(matrix[rows][cols] == 'S'):
+                    start = rows,cols
+                    grid[rows][cols].make_start()
+                if(isExit(rows,cols,matrix)):
+                    grid[rows][cols].make_end()
+                    end = rows,cols
+           
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if started:
+                continue
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    for row in grid:
+                        for spot in row:
+                            spot.update_neighbours(grid)
+                    BFS(lambda: draw(WIN, grid, ROWS, width), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
 
-            else:
-                pass
 
-    path = DFS(matrix, start, end)
-    for i in path:
-        print(i)
-    visualize_maze(matrix, bonus_points, start, end, file_name, path)
+    pygame.quit()
 
+
+main()
