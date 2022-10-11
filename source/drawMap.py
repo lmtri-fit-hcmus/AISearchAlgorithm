@@ -15,10 +15,12 @@
 #   outfile.write('xxxxxxxxxxxxxxxxxxxxxx')
 
 from fileinput import filename
+import imp
 import os
 import matplotlib.pyplot as plt
+from DFS import DFS
 
-def visualize_maze(matrix, bonus, start, end, file_name, route=None):
+def visualize_maze(matrix, bonus, start, end, file_name, route):
     """
     Args:
       1. matrix: The matrix read from the input file,
@@ -91,7 +93,7 @@ def read_file(file_name: str = 'maze.txt'):
 
   return bonus_points, matrix
 
-def save_maze(file_name):
+def main(file_name):
     bonus_points, matrix = read_file(file_name)
     for i in range(len(matrix)):
         for j in range(len(matrix[0])):
@@ -104,8 +106,9 @@ def save_maze(file_name):
                     
             else:
                 pass
-
-    visualize_maze(matrix,bonus_points,start,end,file_name)
     
-file_name = "/input/maze_map.txt"
-save_maze(file_name)
+    path = DFS(matrix, start, end)
+    visualize_maze(matrix,bonus_points,start,end,file_name, path)
+    
+file_name = "maze_map.txt"
+main(file_name)
