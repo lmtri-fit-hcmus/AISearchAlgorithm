@@ -120,6 +120,3 @@ def main(file_name):
         print(i)
     visualize_maze(matrix, bonus_points, start, end, file_name, path)
 
-
-file_name = "./input/maze_map.txt"
-main(file_name)

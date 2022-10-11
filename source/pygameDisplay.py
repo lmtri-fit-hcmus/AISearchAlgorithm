@@ -1,9 +1,11 @@
 #source code to make video display:
 #https://www.youtube.com/watch?v=JtiK0DOeI4A
 
+from numpy import mat
 import pygame
 import math
 from queue import PriorityQueue
+from main import read_file
 
 WIDTH = 800
 HEIGHT = 800
@@ -144,7 +146,7 @@ def algorithm(draw, grid, start, end):
 
 def make_grid(rows, width):
     grid = []
-    gap = width // rows
+    gap = HEIGHT // 21
     for i in range(rows):
         grid.append([])
         for j in range(rows):
@@ -178,14 +180,23 @@ def get_clicked_pos(pos, rows, width):
     return row, col
 
 def main(win, width):
-    ROWS = 50
+
+    file_name = "./input/maze_map.txt"
+    bonus_points, matrix = read_file(file_name)
+    ROWS = len(matrix)
     grid = make_grid(ROWS, width)
     start = None
     end = None
     run = True
     started = False
+
+                
     while run:
         draw(win, grid, ROWS, width)
+        for i in range(len(matrix)-1):
+            for j in range(len(matrix[i])-1):
+                if(matrix[i][j] == 'x'):
+                    grid[i][j].make_barrier()
         for event in pygame.event.get():
             if event.type ==pygame.QUIT:
                 run = False
