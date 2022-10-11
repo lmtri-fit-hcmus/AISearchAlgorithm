@@ -10,18 +10,14 @@ def DFS(matrix, start, exit):
     path = []
     currentVertex = start
     while stack:
-        if(currentVertex == exit):
-            return path
         currentVertex = stack.pop()
-        if not(currentVertex in path):
-            path.append(currentVertex)
-            count = 0
-            for neig in x:
-                nextVertex = (currentVertex[0] + neig[0],currentVertex[1] + neig[1])
-                if(isValidVertex(nextVertex,matrix) and not(nextVertex in path)):
-                    stack.append(nextVertex)
-                    count+=1
-            if count == 0:
-                path.remove(currentVertex)
-    return path
+        path.append(currentVertex)
+        for neig in x:
+            nextVertex = (currentVertex[0] + neig[0],currentVertex[1] + neig[1])
+            if(isValidVertex(nextVertex,matrix) and not(nextVertex in path)):
+                if(nextVertex == exit):
+                    path.append(nextVertex)
+                    return path
+                stack.append(nextVertex)
+    return []
             
