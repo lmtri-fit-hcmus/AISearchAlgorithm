@@ -70,7 +70,7 @@ def visualize_maze(matrix, bonus, start, end, file_name, route):
          verticalalignment='center')
     plt.xticks([])
     plt.yticks([])
-    plt.savefig(file_name + ".jpg",bbox_inches='tight')
+    plt.savefig(file_name + "DFS.jpg",bbox_inches='tight')
     plt.show()
 
     print(f'Starting point (x, y) = {start[0], start[1]}')
@@ -110,5 +110,5 @@ def main(file_name):
     path = DFS(matrix, start, end)
     visualize_maze(matrix,bonus_points,start,end,file_name, path)
     
-file_name = "maze_map.txt"
+file_name = "./input/maze_map.txt"
 main(file_name)
