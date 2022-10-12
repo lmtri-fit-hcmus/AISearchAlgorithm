@@ -2,8 +2,10 @@ from operator import ne
 from time import sleep
 from Helper import *
 from Visualization import *
+from queue import Queue, PriorityQueue
 import sys
 import pygame.camera
+
 
 def DFS(draw, grid , start: Spot, exit: Spot):
     stack = [(start,[start])]
@@ -21,7 +23,6 @@ def DFS(draw, grid , start: Spot, exit: Spot):
                 if(neig not in visited):
                     stack.append((neig,path+[neig]))
                     neig.make_open()
-                    sleep(0.01)
                     draw()  
     if(stack):
         reconstruct_path(path, draw)
@@ -39,11 +40,36 @@ def BFS(draw, grid , start: Spot, exit: Spot):
                 queue.append((neig, path+[neig]))
                 visited.append(neig)
                 neig.make_open()
-                sleep(0.01)
                 draw()
-    if(start):
+    if(queue):
         reconstruct_path(path, draw)
     return []
+
+def UCS(draw, grid, start: Spot, exit: Spot, weigh = None):
+    priorQ = PriorityQueue()
+    priorQ.put((0,(start,[start])))
+    visited = []
+    while(priorQ):
+        w, (currentVertex, path) = priorQ.get()
+        visited.append(currentVertex)
+        currentVertex.make_open()
+        if(currentVertex == exit):
+            break
+        for neig in currentVertex.neighbours:
+            if neig not in visited:
+                #cost = w + weigh[currentVertex][neig]
+                cost = 0
+                priorQ.put((cost, (neig, path + [neig])))
+                neig.make_open()
+                draw()
+
+    if(priorQ):
+        reconstruct_path(path, draw)
+        draw()
+    return []
+
+#def GBFS(draw, grid, start: Spot, exit: Spot):
+
 
 def main():
     #init pygame
@@ -87,7 +113,7 @@ def main():
                     for row in grid:
                         for spot in row:
                             spot.update_neighbours(grid)
-                    BFS(lambda: draw(WIN, grid, ROWS, width), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
+                    UCS(lambda: draw(WIN, grid, ROWS, width), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
 
 
     pygame.quit()
