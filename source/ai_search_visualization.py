@@ -1,7 +1,5 @@
 #source code to make video display:
 #https://www.youtube.com/watch?v=JtiK0DOeI4A
-
-from time import sleep
 from turtle import width
 from typing import List
 from numpy import mat
@@ -94,59 +92,39 @@ class Spot:
 
     def make_start(self):
         self.colour = ORANGE
-def reconstruct_path(came_from: list, draw):
+def reconstruct_path(win, came_from: list, draw):
     i = 0
     for current in came_from:
         current = came_from[len(came_from)-1-i]
-        print((current.row, current.col))
+        #print((current.row, current.col))
         current.make_path()
-        sleep(0.01)
+        pygame.image.save(win, "tmp_image/" + str(i) + "_.png")
         i+=1
         draw()
 
-def algorithm(draw, grid, start, end):
-    count = 0
-    open_set = PriorityQueue()   # returns the smallest value in the list
-    open_set.put((0, count, start))
-    came_from = {}
-    g_score = {spot: float("inf") for row in grid for spot in row}
-    g_score[start] = 0
-    f_score = {spot: float("inf") for row in grid for spot in row}
-    f_score[start] = h(start.get_pos(), end.get_pos())
+def restore_pygame(matrix,COLS,ROWS):
+    HEIGHT, WIDTH, grid = make_grid(COLS, ROWS)
+    for rows in range(len(matrix)):
+        for cols in range(len(matrix[0])):
+            grid[rows][cols].reset()
 
-    open_set_hash = {start}
-    while not open_set.empty():
-        for event in pygame.event.get():
-            if event.type ==pygame.QUIT:
-                pygame.quit()
-        current = open_set.get()[2]      # returns the best value
-        open_set_hash.remove(current)
-        if current == end:
-            reconstruct_path(came_from, end, draw)
-            end.make_end()
-            start.make_start()
-            return True
-
-        for neighbour in current.neighbours:
-            temp_g_score = g_score[current]+1
-
-            if temp_g_score < g_score[neighbour]:
-                came_from[neighbour] = current
-                g_score[neighbour] = temp_g_score
-                f_score[neighbour] = temp_g_score + h(neighbour.get_pos(), end.get_pos())
-                if neighbour not in open_set_hash:
-                    count += 1
-                    open_set.put((f_score[neighbour], count, neighbour))
-                    open_set_hash.add(neighbour)
-                    neighbour.make_open()
-        draw()
-        if current != start:
-            current.make_closed()
-
-    return False
-
-
-
+    for rows in range(len(matrix)):
+        for cols in range(len(matrix[rows])):
+            if(matrix[rows][cols] == 'x'):
+                grid[rows][cols].make_barrier()
+            if(matrix[rows][cols] == 'S'):
+                start = rows,cols
+                grid[rows][cols].make_start()
+            if(isExit(rows,cols,matrix)):
+                grid[rows][cols].make_end()
+                end = rows,cols
+        
+    for row in grid:
+        for spot in row:
+            spot.update_neighbours(grid)
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Pathfinding")
+    return WIN, grid, HEIGHT, WIDTH, start, end
 def make_grid(cols,rows):
     grid = []
     gap = HEIGHT // rows
