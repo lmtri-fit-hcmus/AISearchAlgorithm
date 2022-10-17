@@ -1,5 +1,5 @@
 from operator import ne
-from source.ai_search_helper import *
+from ai_search_helper import *
 from ai_search_visualization import *
 from ai_search_createvideo import createVideo
 from queue import Queue, PriorityQueue

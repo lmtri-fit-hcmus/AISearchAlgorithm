@@ -122,7 +122,7 @@ def restore_pygame(matrix,COLS,ROWS):
     for row in grid:
         for spot in row:
             spot.update_neighbours(grid)
-    WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT), flags = pygame.HIDDEN)
     pygame.display.set_caption("Pathfinding")
     return WIN, grid, HEIGHT, WIDTH, start, end
 def make_grid(cols,rows):
