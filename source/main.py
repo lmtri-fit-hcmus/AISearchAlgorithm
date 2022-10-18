@@ -93,6 +93,7 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, matrix):
     visited = []
     costSoFar:dict[Spot, int] = {}
     costSoFar[start] = 0
+    count = 0
     while not priorQ.empty():
         _, (currentVertex, path) = priorQ.get()
         
@@ -103,13 +104,16 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, matrix):
             newCost = costSoFar[currentVertex] + 1
             if neig not in visited or newCost < costSoFar[neig]:
                 neig.make_open()
-                draw()
+                
                 costSoFar[neig] = newCost
                 priority = newCost + nonBonusPointAstarHFuct1(neig,exit)
                 print(str(neig.row) + " " + str(neig.col) + " " + str(priority))
                 priorQ.put( (priority, (neig, path + [neig] )))
                 visited.append(neig)
                 #sleep(0.5)
+            draw()
+            pygame.image.save(win, "tmp_image/" + str(count) + ".png")
+            count+=1
                 
 
 
@@ -117,7 +121,7 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, matrix):
     if not priorQ.empty():
         reconstruct_path(win, path, draw)
     return []
-    
+
 
 def SearchAlgorithmVisual():
     #init D
@@ -132,6 +136,7 @@ def SearchAlgorithmVisual():
     width = WIDTH
     draw(WIN, grid, ROWS, width,bonus_points)
     Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]],matrix)
+    createVideo("4.mp4")
 
     # WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
     # width = WIDTH
