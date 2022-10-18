@@ -87,7 +87,7 @@ def UCS(win, draw, grid, start: Spot, exit: Spot, weigh = None):
 def GBFS(win, draw, grid, start: Spot, exit: Spot):
     return 1
 
-def Astar(win, draw, grid, start: Spot, exit: Spot, matrix):
+def Astar(win, draw, grid, start: Spot, exit: Spot, matrix, H):
     priorQ = PriorityQueue()
     priorQ.put((0, (start, [start])))
     visited = []
@@ -106,7 +106,7 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, matrix):
                 neig.make_open()
                 
                 costSoFar[neig] = newCost
-                priority = newCost + nonBonusPointAstarHFuct1(neig,exit)
+                priority = newCost + H(neig,exit)
                 print(str(neig.row) + " " + str(neig.col) + " " + str(priority))
                 priorQ.put( (priority, (neig, path + [neig] )))
                 visited.append(neig)
@@ -135,8 +135,14 @@ def SearchAlgorithmVisual():
     WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
     width = WIDTH
     draw(WIN, grid, ROWS, width,bonus_points)
-    Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]],matrix)
+    Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]],matrix, nonBonusPointAstarHFunct1)
     createVideo("4.mp4")
+
+    WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
+    width = WIDTH
+    draw(WIN, grid, ROWS, width,bonus_points)
+    Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]],matrix, nonBonusPointAstarHFunct2)
+    createVideo("5.mp4")
 
     # WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
     # width = WIDTH
