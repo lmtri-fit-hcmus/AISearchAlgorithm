@@ -4,12 +4,13 @@ from turtle import width
 from typing import List
 from numpy import mat
 import pygame
+import pygame.font
 import math
 from queue import PriorityQueue
 
 HEIGHT = 500
-
-
+pygame.font.init()
+FONT = pygame.font.SysFont('abyssinicasil', 30)
 RED = (255,0,0)
 GREEN = (0,255,0)
 YELLOW = (255,255,0)
@@ -31,6 +32,9 @@ class Spot:
         self.width = width
         self.total_rows = total_rows
         self.total_cols = total_cols
+    
+    def isColor(self):
+        return self.colour!=WHITE
 
     def get_pos(self):
         return self.row, self.col
@@ -68,6 +72,9 @@ class Spot:
     def make_path(self):
         self.colour = PURPLE
 
+    def make_bonus_point(self):
+        self.colour = YELLOW
+
     def draw(self, win):
         pygame.draw.rect(win, self.colour, (self.x, self.y, self.width, self.width))
 
@@ -92,6 +99,14 @@ class Spot:
 
     def make_start(self):
         self.colour = ORANGE
+
+def add_text(win, spot, text):
+        font = pygame.font.Font('freesansbold.ttf', 25)
+        text = font.render(text, True, BLACK, WHITE)
+        textRect = text.get_rect()
+        textRect.center = (spot.x+spot.width/2, spot.y+spot.width/2)
+        win.blit(text, textRect)
+
 def reconstruct_path(win, came_from: list, draw):
     i = 0
     for current in came_from:
@@ -107,7 +122,9 @@ def restore_pygame(matrix,COLS,ROWS):
     for rows in range(len(matrix)):
         for cols in range(len(matrix[0])):
             grid[rows][cols].reset()
-
+ 
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT)) # flags = pygame.HIDDEN
+    pygame.display.set_caption("Pathfinding")
     for rows in range(len(matrix)):
         for cols in range(len(matrix[rows])):
             if(matrix[rows][cols] == 'x'):
@@ -118,12 +135,9 @@ def restore_pygame(matrix,COLS,ROWS):
             if(isExit(rows,cols,matrix)):
                 grid[rows][cols].make_end()
                 end = rows,cols
-        
     for row in grid:
         for spot in row:
             spot.update_neighbours(grid)
-    WIN = pygame.display.set_mode((WIDTH, HEIGHT), flags = pygame.HIDDEN)
-    pygame.display.set_caption("Pathfinding")
     return WIN, grid, HEIGHT, WIDTH, start, end
 def make_grid(cols,rows):
     grid = []
@@ -144,11 +158,14 @@ def draw_grid(win, cols, rows, width):
         for j in range(cols):
             pygame.draw.line(win, GREY, (j* gap, 0), (j* gap,width))
 
-def draw(win, grid, rows, width):
+def draw(win, grid, rows, width, bonus_point):
     win.fill(WHITE)
     for row in grid:
         for spot in row:
             spot.draw(win)
+
+    for i in bonus_point:
+        add_text(win,grid[i[0]][i[1]],'+')
 
     draw_grid(win, len(grid[0]), rows, width)
     pygame.display.update()
