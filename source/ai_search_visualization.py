@@ -7,6 +7,7 @@ import pygame
 import pygame.font
 import math
 from queue import PriorityQueue
+from ai_search_helper import *
 
 HEIGHT = 500
 pygame.font.init()
@@ -77,6 +78,9 @@ class Spot:
 
     def draw(self, win):
         pygame.draw.rect(win, self.colour, (self.x, self.y, self.width, self.width))
+    
+    def make_start(self):
+        self.colour = ORANGE
 
     def update_neighbours(self, grid):
         self.neighbours = []
@@ -95,10 +99,7 @@ class Spot:
             self.neighbours.append(grid[self.row][self.col - 1])
 
     def __lt__(self,other):
-        return False
-
-    def make_start(self):
-        self.colour = ORANGE
+        return False  
 
 def add_text(win, spot, text):
         font = pygame.font.Font('freesansbold.ttf', 25)
@@ -139,6 +140,7 @@ def restore_pygame(matrix,COLS,ROWS):
         for spot in row:
             spot.update_neighbours(grid)
     return WIN, grid, HEIGHT, WIDTH, start, end
+    
 def make_grid(cols,rows):
     grid = []
     gap = HEIGHT // rows
@@ -170,17 +172,4 @@ def draw(win, grid, rows, width, bonus_point):
     draw_grid(win, len(grid[0]), rows, width)
     pygame.display.update()
 
-def isExit(rows,cols,matrix):
-    if(cols == 0 and matrix[rows][cols] == ' '):
-        if(matrix[rows][cols+1] != 'x'):
-            return 1
-    if(cols == len(matrix[0])-1 and matrix[rows][cols] == ' '):
-        if(matrix[rows][cols-1] != 'x'):
-            return 1
-    if(rows == 0 and matrix[rows][cols] == ' '):
-        if(matrix[rows+1][cols] != 'x'):
-            return 1
-    if(rows == len(matrix)-1 and matrix[rows][cols] == ' '):
-        if(matrix[rows-1][cols] != 'x'):
-            return 1
-    return 0
+
