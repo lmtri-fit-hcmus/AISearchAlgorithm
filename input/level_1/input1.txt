@@ -1,5 +1,4 @@
-1
-1 1 -1
+0
 xxxxxxxxxxxxxxxxxxxxxxxx
 x       xx             x 
 x     x     xxxxxxxxxx x
