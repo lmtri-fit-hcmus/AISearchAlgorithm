@@ -21,6 +21,7 @@ PURPLE = (128, 0, 128)
 ORANGE = (255, 165, 0)
 GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
+BLUE = (0,0,255)
 
 class Spot:
     def __init__(self, row, col, width, total_rows,total_cols):
@@ -44,7 +45,7 @@ class Spot:
         return self.colour == RED
 
     def is_open(self):
-        return self.colour ==GREEN
+        return self.colour == GREEN
 
     def is_barrier(self):
         return self.colour == BLACK
@@ -54,6 +55,9 @@ class Spot:
 
     def is_end(self):
         return self.colour == RED
+    
+    def is_plus_point(self):
+        return self.colour == BLUE
 
     def reset(self):
         self.colour = WHITE
