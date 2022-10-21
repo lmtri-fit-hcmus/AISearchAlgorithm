@@ -12,11 +12,16 @@ def SearchAlgorithmVisual():
     
     WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
     width = WIDTH
-    # bonus_points.append((end[1],end[0], -15))
+
+    # draw(WIN, grid, ROWS, width,bonus_points)
+    # print(str(grid[start[0]][start[1]])+" "+str(grid[end[0]][end[1]])+" "+ str(ManhattanDistance(grid[start[0]][start[1]], grid[end[0]][end[1]])))
+    # Astar_bunus_point(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]],matrix, ManhattanDistance,bonus_points)
+    # createVideo("6.mp4")
+    
     draw(WIN, grid, ROWS, width,bonus_points)
-    print(str(grid[start[0]][start[1]])+" "+str(grid[end[0]][end[1]])+" "+ str(ManhattanDistance(grid[start[0]][start[1]], grid[end[0]][end[1]])))
-    Astar_bunus_point(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]],matrix, ManhattanDistance,bonus_points)
-    createVideo("6.mp4")
+    print(str(grid[start[0]][start[1]])+" "+str(grid[end[0]][end[1]])+" "+ str(EuclidDistance(grid[start[0]][start[1]], grid[end[0]][end[1]])))
+    Astar_bunus_point(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]],matrix, EuclidDistance,bonus_points)
+    createVideo("7.mp4")
 
     # WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
     # width = WIDTH

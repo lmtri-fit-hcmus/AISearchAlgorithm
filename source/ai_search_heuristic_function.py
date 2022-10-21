@@ -16,3 +16,8 @@ def ManhattanDistance(node: Spot, end: Spot):
     dx = abs(node.row - end.row)
     dy = abs(node.col - end.col)
     return (dx + dy)
+
+def EuclidDistance(node: Spot, end: Spot):
+    dx = abs(node.row - end.row)
+    dy = abs(node.col - end.col)
+    return np.sqrt(dx*dx + dy*dy)

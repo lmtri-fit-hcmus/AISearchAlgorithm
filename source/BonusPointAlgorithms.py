@@ -49,14 +49,6 @@ def Astar_bunus_point(win, draw, grid, start: Spot, exit: Spot, matrix, H, bonus
         # Kiểm tra nếu điểm đang xét là một điểm cộng
         # thì chúng ta thực hiện giảm độ dài đường đi tương ứng với điểm cộng đó
         print("Choose "+str(currentVertex.x/currentVertex.width)+", "+str(currentVertex.y/currentVertex.width)+" "+str(dis))
-        
-        # bonus = 0
-        
-        # for j in range(0,len(bonus_points)):
-        #     if(currentVertex.x/currentVertex.width == bonus_points[j][0] and currentVertex.y/currentVertex.width == bonus_points[j][1]):
-        #         costSoFar[currentVertex] = costSoFar[currentVertex] + bonus_points[j][2]
-        #         bonus_points.remove(bonus_points[j])
-
 
         currentVertex.make_closed()
         # Đặt giá trị ban đầu của độ dài heuristic dự đoán là số lớn
@@ -67,10 +59,16 @@ def Astar_bunus_point(win, draw, grid, start: Spot, exit: Spot, matrix, H, bonus
         bonus = 0
         newCost = 1 + costSoFar[currentVertex]
         for neig in currentVertex.neighbours:
-            for j in range(0,len(bonus_points)):
+            j = 0
+            n = len(bonus_points)
+            while(j < n):
                 if(currentVertex.x/currentVertex.width == bonus_points[j][0] and currentVertex.y/currentVertex.width == bonus_points[j][1]):
                     bonus = bonus + bonus_points[j][2]
                     bonus_points.remove(bonus_points[j])
+                    j = j - 1
+                    n = n - 1
+                j = j + 1
+                
             newCost = newCost + bonus
             # Tính hàm f(x) = g(x) + h(x) cho biết tổng độ dài đường đi dự đoán nếu ta tiếp tục đi từ điểm hiện tại đến đích
             heuristicCost =  H(neig,exit)
@@ -87,6 +85,7 @@ def Astar_bunus_point(win, draw, grid, start: Spot, exit: Spot, matrix, H, bonus
 
             for j in range(0,len(bonus_points)):
                 heuristicCurrentCost = heuristic_bonus_point(win, draw, grid, neig , exit, matrix, H, bonus_points[j])
+                
                 print("heuristic ("+str(bonus_points[j][0])+", "+str(bonus_points[j][1])+ ") "+str(heuristicCurrentCost))
                 # Nếu tìm ra đường đi được dự đoán tốt hơn đi thẳng đến đích thì gán nó là đường đi ưu tiên
                 # Sau bước này, ta sẽ tìm ra đường đi được dự đoán là tốt nhất
@@ -100,19 +99,11 @@ def Astar_bunus_point(win, draw, grid, start: Spot, exit: Spot, matrix, H, bonus
                 neig.make_open()
                 costSoFar[neig] = newCost
                 
-            # priority = heuristicCost + newCost
-            # if(len(bonus_points)==0):
-            #     priority = heuristicCost + newCost
-            # else:
-            priority = heuristicCost + costSoFar[neig]
-            print("Priority "+str(priority))
-            # print(str(neig.col) + " " + str(neig.row) + " " + str(priority))
-            priorQ.put( (priority, (neig, path + [neig] )))
-            visited.append(neig)
+                priority = heuristicCost + costSoFar[neig]
+                print("Priority "+str(priority))
+                priorQ.put( (priority, (neig, path + [neig] )))
+                visited.append(neig)
 
-            # newCost = costSoFar[currentVertex] + 1
-        
-            
                 #sleep(0.5)
             draw()
             pygame.image.save(win, "tmp_image/" + str(count) + ".png")
