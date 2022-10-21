@@ -99,19 +99,39 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, matrix, H):
     count = 0
     while not priorQ.empty():
         _, (currentVertex, path) = priorQ.get()
-        
+        print(path)
+        # Nếu điểm đang xác là điểm kết thúc thì dừng
         if(currentVertex == exit):
             break
+        
+        # Thực hiện đánh đáu điểm đang xét là 'đã đi qua'
         currentVertex.make_closed()
+        
+        # Xét các hàng xóm của điểm đang xét
         for neig in currentVertex.neighbours:
+            # Tính độ dài đường di đến điểm hàng xóm
             newCost = costSoFar[currentVertex] + 1
+            
+            # Nếu điểm hàng xóm đã được đi qua hoặc tìm ra con đường ngắn hơn đi đến điểm hàng xóm
+            # Thì thực hiện mở các ô cạnh nó
             if neig not in visited or newCost < costSoFar[neig]:
                 neig.make_open()
                 
+                # Cập nhật độ dài con đường đến điểm hàng xóm
                 costSoFar[neig] = newCost
+                
+                # Tính hàm đánh giá dựa trên độ dài đã đi qua ở hiện tại cộng với độ dài đường
+                # đi dự đoán đến điểm đích.
                 priority = newCost + H(neig,exit)
+                
+                # In giá trị để kiểm tra
                 print(str(neig.row) + " " + str(neig.col) + " " + str(priority))
+                
+                # Đưa điểm đang hàng xóm đang xét, đường đi cùng độ dài quãng được đánh giá vào
+                # hàng đợi ưu tiên
                 priorQ.put( (priority, (neig, path + [neig] )))
+                
+                # Thêm hàng xóm vào tập các điểm đã đi qua.
                 visited.append(neig)
                 #sleep(0.5)
             draw()
