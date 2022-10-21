@@ -1,4 +1,5 @@
-0
+1
+10 5 -5
 xxxxxxxxxxxxxxxxxxxxxxxx
 x       xx             x 
 x     x     xxxxxxxxxx x

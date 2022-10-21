@@ -171,7 +171,7 @@ def draw(win, grid, rows, width, bonus_point):
             spot.draw(win)
 
     for i in bonus_point:
-        add_text(win,grid[i[0]][i[1]],'+')
+        add_text(win,grid[i[1]][i[0]],'+')
 
     draw_grid(win, len(grid[0]), rows, width)
     pygame.display.update()
