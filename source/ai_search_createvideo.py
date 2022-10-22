@@ -22,4 +22,4 @@ def createVideo(videoName):
 
 
     video_clip = concatenate_videoclips(clips, method='compose')
-    video_clip.write_videofile("output/"+videoName, fps=24, remove_temp=True, codec="libx264", audio_codec="aac")
+    video_clip.write_videofile(videoName, fps=24, remove_temp=True, codec="libx264", audio_codec="aac")
