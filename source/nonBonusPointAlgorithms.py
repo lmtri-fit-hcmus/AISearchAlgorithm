@@ -86,11 +86,37 @@ def UCS(win, draw, grid, start: Spot, exit: Spot, weigh = None):
         return True
     return False
 
-def GBFS(win, draw, grid, start: Spot, exit: Spot):
-    return 1
+def GBFS(win, draw, grid, start: Spot, exit: Spot, H):
+    priorQ = PriorityQueue() 
+    priorQ.put( (0, (start, [start])) )
+    visited = []
+
+    while priorQ:
+        #get top and make closed (if possible)
+        _, ( currentVertex, path ) = priorQ.get() 
+        if currentVertex != start:
+            currentVertex.make_closed()
+        if currentVertex == exit:
+            break        
+        count = 0
+        for neig in currentVertex.neighbours:
+            #if neighbour is a valid vertex
+            if ( neig not in visited ) and ( neig not in priorQ ):
+                cost = H(neig, exit)
+                priorQ.put( cost, ( neig, path + [neig] ) )
+                neig.make_open()
+                visited.append(neig)
+        draw()
+        pygame.image.save(win, "tmp_image/" + str(count) + ".png")
+        count+=1
+
+    if not priorQ.empty() or currentVertex == exit:
+        reconstruct_path(win, path, draw)
+        return True
+    return False
 
 
-def Astar(win, draw, grid, start: Spot, exit: Spot, matrix, H):
+def Astar(win, draw, grid, start: Spot, exit: Spot, H):
     priorQ = PriorityQueue()
     priorQ.put((0, (start, [start])))
     visited = []

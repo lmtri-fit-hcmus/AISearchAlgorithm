@@ -94,11 +94,28 @@ def nonBonusStart():
         createVideo(output_path + '/ucs/ucs.mp4') 
 
         WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
+        pygame.display.set_caption("GBFS " + file_name)
+        width = WIDTH
+        draw(WIN, grid, ROWS, width,bonus_points)
+        resetTmpImage()
+        Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct1)   #having lambda lets you run the function inside the function
+        createVideo(output_path + '/gbfs/gbfs_heuristic_1.mp4')
+
+        
+        WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
+        pygame.display.set_caption("GBFS " + file_name)
+        width = WIDTH
+        draw(WIN, grid, ROWS, width,bonus_points)
+        resetTmpImage()
+        Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct2)   #having lambda lets you run the function inside the function
+        createVideo(output_path + '/gbfs/gbfs_heuristic_2.mp4') 
+
+        WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
         pygame.display.set_caption("Astar " + file_name)
         width = WIDTH
         draw(WIN, grid, ROWS, width,bonus_points)
         resetTmpImage()
-        Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]],matrix, nonBonusPointAstarHFunct1)   #having lambda lets you run the function inside the function
+        Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct1)   #having lambda lets you run the function inside the function
         createVideo(output_path + '/astar/astar_heuristic_1.mp4')
 
         
@@ -107,8 +124,10 @@ def nonBonusStart():
         width = WIDTH
         draw(WIN, grid, ROWS, width,bonus_points)
         resetTmpImage()
-        Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]],matrix, nonBonusPointAstarHFunct2)   #having lambda lets you run the function inside the function
+        Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct2)   #having lambda lets you run the function inside the function
         createVideo(output_path + '/astar/astar_heuristic_2.mp4') 
+
+        
 
 
     
