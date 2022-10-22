@@ -74,32 +74,36 @@ def nonBonusStart():
         width = WIDTH
         draw(WIN, grid, ROWS, width,bonus_points)
         resetTmpImage()
-        DFS(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
-        createVideo(output_path + '/dfs/dfs.mp4') 
+        isPath, length = DFS(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
+        createVideo(output_path + '/dfs/dfs.mp4')
+        createText(isPath, length, output_path + '/dfs/dfs.txt')
 
         WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
         pygame.display.set_caption("BFS " + file_name)
         width = WIDTH
         draw(WIN, grid, ROWS, width,bonus_points)
         resetTmpImage()
-        BFS(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
+        isPath, length = BFS(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
         createVideo(output_path + '/bfs/bfs.mp4') 
+        createText(isPath, length, output_path + '/bfs/bfs.txt')
         
         WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
         pygame.display.set_caption("UCS " + file_name)
         width = WIDTH
         draw(WIN, grid, ROWS, width,bonus_points)
         resetTmpImage()
-        UCS(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
+        isPath, length = UCS(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
         createVideo(output_path + '/ucs/ucs.mp4') 
+        createText(isPath, length, output_path + '/ucs/ucs.txt')
 
         WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
         pygame.display.set_caption("GBFS " + file_name)
         width = WIDTH
         draw(WIN, grid, ROWS, width,bonus_points)
         resetTmpImage()
-        Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct1)   #having lambda lets you run the function inside the function
+        isPath, length = GBFS(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct1)   #having lambda lets you run the function inside the function
         createVideo(output_path + '/gbfs/gbfs_heuristic_1.mp4')
+        createText(isPath, length, output_path + '/gbfs/gbfs_heuristic_1.txt')
 
         
         WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
@@ -107,16 +111,18 @@ def nonBonusStart():
         width = WIDTH
         draw(WIN, grid, ROWS, width,bonus_points)
         resetTmpImage()
-        Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct2)   #having lambda lets you run the function inside the function
+        isPath, length = GBFS(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct2)   #having lambda lets you run the function inside the function
         createVideo(output_path + '/gbfs/gbfs_heuristic_2.mp4') 
+        createText(isPath, length, output_path + '/gbfs/gbfs_heuristic_2.txt')
 
         WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
         pygame.display.set_caption("Astar " + file_name)
         width = WIDTH
         draw(WIN, grid, ROWS, width,bonus_points)
         resetTmpImage()
-        Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct1)   #having lambda lets you run the function inside the function
+        isPath, length = Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct1)   #having lambda lets you run the function inside the function
         createVideo(output_path + '/astar/astar_heuristic_1.mp4')
+        createText(isPath, length, output_path + '/astar/astar_heuristic_1.txt')
 
         
         WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
@@ -124,8 +130,9 @@ def nonBonusStart():
         width = WIDTH
         draw(WIN, grid, ROWS, width,bonus_points)
         resetTmpImage()
-        Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct2)   #having lambda lets you run the function inside the function
+        isPath, length = Astar(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]], nonBonusPointAstarHFunct2)   #having lambda lets you run the function inside the function
         createVideo(output_path + '/astar/astar_heuristic_2.mp4') 
+        createText(isPath, length, output_path + '/astar/astar_heuristic_2.txt')
 
         
 
