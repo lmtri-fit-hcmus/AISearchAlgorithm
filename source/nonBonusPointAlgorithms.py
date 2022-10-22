@@ -52,7 +52,7 @@ def DFS(win, draw, grid , start: Spot, exit: Spot):
                     neig.make_open()
                     draw()  
             pygame.image.save(win, "tmp_image/" + str(count) + ".png")
-            count+=1
+            count +=1
     if(stack or currentVertex == exit):
         reconstruct_path(win, path, draw)
     return []
@@ -77,10 +77,9 @@ def UCS(win, draw, grid, start: Spot, exit: Spot, weigh = None):
                 cost = 0
                 priorQ.put((cost, (neig, path + [neig])))
                 neig.make_open()
-                pygame.image.save(win, "tmp_image/" + str(count) + ".png")
                 draw()
                 count+=1
-                
+            pygame.image.save(win, "tmp_image/" + str(count) + ".png")
 
     if(priorQ or currentVertex == exit):
         reconstruct_path(win, path, draw)
@@ -101,7 +100,6 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, matrix, H):
     count = 0
     while not priorQ.empty():
         _, (currentVertex, path) = priorQ.get()
-        print(path)
         # Nếu điểm đang xác là điểm kết thúc thì dừng
         if(currentVertex == exit):
             break
@@ -127,7 +125,7 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, matrix, H):
                 priority = newCost + H(neig,exit)
                 
                 # In giá trị để kiểm tra
-                print(str(neig.row) + " " + str(neig.col) + " " + str(priority))
+                #print(str(neig.row) + " " + str(neig.col) + " " + str(priority))
                 
                 # Đưa điểm đang hàng xóm đang xét, đường đi cùng độ dài quãng được đánh giá vào
                 # hàng đợi ưu tiên
@@ -137,8 +135,8 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, matrix, H):
                 visited.append(neig)
                 #sleep(0.5)
             draw()
-            pygame.image.save(win, "tmp_image/" + str(count) + ".png")
             count+=1
+        pygame.image.save(win, "tmp_image/" + str(count) + ".png")
                 
 
 
