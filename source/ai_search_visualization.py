@@ -177,3 +177,19 @@ def draw(win, grid, rows, width, bonus_point):
     pygame.display.update()
 
 
+def isExit(rows,cols,matrix):
+    if(cols == 0 and matrix[rows][cols] == ' '):
+        if(matrix[rows][cols+1] != 'x'):
+            return 1
+    if(cols == len(matrix[0])-1 and matrix[rows][cols] == ' '):
+        if(matrix[rows][cols-1] != 'x'):
+            return 1
+    if(rows == 0 and matrix[rows][cols] == ' '):
+        if(matrix[rows+1][cols] != 'x'):
+            return 1
+    if(rows == len(matrix)-1 and matrix[rows][cols] == ' '):
+        if(matrix[rows-1][cols] != 'x'):
+            return 1
+    return 0
+
+

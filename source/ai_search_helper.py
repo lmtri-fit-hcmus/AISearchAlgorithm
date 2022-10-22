@@ -1,4 +1,17 @@
 from fileinput import filename
+import imp
+from os import listdir
+import shutil
+from ai_search_createvideo import *
+from nonBonusPointAlgorithms import *
+
+LEVEL1_INPUT_PATH = "./input/level_1"
+LEVEL2_INPUT_PATH = "./input/level_2"
+
+LEVEL1_OUTPUT_PATH = "./output/level_1"
+LEVEL2_OUTPUT_PATH = "./output/level_2"
+
+
 
 def read_file(file_name: str = 'maze.txt'):
     f = open(file_name, 'r')
@@ -22,18 +35,46 @@ def isValidVertex(vertex,matrix):
         return False
     return True
 
-def isExit(rows,cols,matrix):
-    if(cols == 0 and matrix[rows][cols] == ' '):
-        if(matrix[rows][cols+1] != 'x'):
-            return 1
-    if(cols == len(matrix[0])-1 and matrix[rows][cols] == ' '):
-        if(matrix[rows][cols-1] != 'x'):
-            return 1
-    if(rows == 0 and matrix[rows][cols] == ' '):
-        if(matrix[rows+1][cols] != 'x'):
-            return 1
-    if(rows == len(matrix)-1 and matrix[rows][cols] == ' '):
-        if(matrix[rows-1][cols] != 'x'):
-            return 1
-    return 0
 
+def resetTmpImage():
+    if os.path.exists('tmp_image'):
+        shutil.rmtree('tmp_image')
+    os.mkdir('tmp_image')
+
+def nonBonusStart():
+    for i in listdir(LEVEL1_INPUT_PATH):
+        file_name = LEVEL1_INPUT_PATH + '/' + i
+        bonus_points, matrix = read_file(file_name)
+        ROWS = len(matrix)
+        COLS = len(matrix[0])
+
+        output_path = LEVEL1_OUTPUT_PATH + '/' + i.split('.')[0]
+
+        if not os.path.exists(LEVEL1_OUTPUT_PATH):
+            os.mkdir(LEVEL1_OUTPUT_PATH)
+        if not os.path.exists(output_path):
+            os.mkdir(output_path)
+
+        WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
+        width = WIDTH
+        draw(WIN, grid, ROWS, width,bonus_points)
+        resetTmpImage()
+        DFS(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
+        createVideo(output_path + '/dfs.mp4') 
+
+        WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
+        width = WIDTH
+        draw(WIN, grid, ROWS, width,bonus_points)
+        resetTmpImage()
+        BFS(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
+        createVideo(output_path + '/bfs.mp4') 
+        
+        WIN, grid, HEIGHT, WIDTH , start, end = restore_pygame(matrix,COLS,ROWS)
+        width = WIDTH
+        draw(WIN, grid, ROWS, width,bonus_points)
+        resetTmpImage()
+        UCS(WIN, lambda: draw(WIN, grid, ROWS, width, bonus_points), grid, grid[start[0]][start[1]], grid[end[0]][end[1]])   #having lambda lets you run the function inside the function
+        createVideo(output_path + '/ucs.mp4') 
+
+
+    

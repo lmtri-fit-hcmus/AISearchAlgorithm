@@ -15,6 +15,8 @@ def BFS(win, draw, grid , start: Spot, exit: Spot):
     count = 0
     while(queue):
         currentVertex, path = queue.pop(0)
+        if(currentVertex!=start):
+            currentVertex.make_closed()
         if currentVertex == exit:
             break
         for neig in currentVertex.neighbours:
@@ -26,7 +28,7 @@ def BFS(win, draw, grid , start: Spot, exit: Spot):
                 count+=1
                 draw()
         pygame.image.save(win, "tmp_image/" + str(count) + ".png")
-    if(queue):
+    if(queue or currentVertex == exit):
         reconstruct_path(win, path, draw)
     return []
 
@@ -39,7 +41,7 @@ def DFS(win, draw, grid , start: Spot, exit: Spot):
     while stack:
         currentVertex, path = stack.pop()
         if(currentVertex!=start):
-            currentVertex.make_open()
+            currentVertex.make_closed()
         if(currentVertex not in visited):
             if currentVertex == exit:
                 break
@@ -51,7 +53,7 @@ def DFS(win, draw, grid , start: Spot, exit: Spot):
                     draw()  
             pygame.image.save(win, "tmp_image/" + str(count) + ".png")
             count+=1
-    if(stack):
+    if(stack or currentVertex == exit):
         reconstruct_path(win, path, draw)
     return []
 
@@ -65,8 +67,7 @@ def UCS(win, draw, grid, start: Spot, exit: Spot, weigh = None):
         w, (currentVertex, path) = priorQ.get()
         visited.append(currentVertex)
         if(currentVertex!=start):
-            currentVertex.make_open()
-        #pygame.image.save(win, "tmp_image/" + str(count) + ".png")
+            currentVertex.make_closed()
         count+=1
         if(currentVertex == exit):
             break
@@ -81,10 +82,10 @@ def UCS(win, draw, grid, start: Spot, exit: Spot, weigh = None):
                 count+=1
                 
 
-    if(priorQ):
+    if(priorQ or currentVertex == exit):
         reconstruct_path(win, path, draw)
-        draw()
-    return []
+        return True
+    return False
 
 def GBFS(win, draw, grid, start: Spot, exit: Spot):
     return 1
@@ -95,6 +96,7 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, matrix, H):
     priorQ.put((0, (start, [start])))
     visited = []
     costSoFar:dict[Spot, int] = {}
+    currentVertex = start
     costSoFar[start] = 0
     count = 0
     while not priorQ.empty():
@@ -141,6 +143,7 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, matrix, H):
 
 
 
-    if not priorQ.empty():
+    if not priorQ.empty() or currentVertex == exit:
         reconstruct_path(win, path, draw)
-    return []
+        return True
+    return False
