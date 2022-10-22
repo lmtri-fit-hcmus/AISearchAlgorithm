@@ -118,9 +118,10 @@ def reconstruct_path(win, came_from: list, draw):
         current = came_from[len(came_from)-1-i]
         #print((current.row, current.col))
         current.make_path()
+        draw()
         pygame.image.save(win, "tmp_image/" + str(i) + "_.png")
         i+=1
-        draw()
+        
 
 def restore_pygame(matrix,COLS,ROWS):
     HEIGHT, WIDTH, grid = make_grid(COLS, ROWS)

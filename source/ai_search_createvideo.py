@@ -22,3 +22,10 @@ def createVideo(videoName):
 
     video_clip = concatenate_videoclips(clips, method='compose')
     video_clip.write_videofile(videoName, fps=24, remove_temp=True, codec="libx264", audio_codec="aac")
+
+def createText(isPath, length, path):
+    file_object  = open(path, "w+")
+    if isPath:
+        file_object.write(str(length))
+    else:
+        file_object.write('NO')

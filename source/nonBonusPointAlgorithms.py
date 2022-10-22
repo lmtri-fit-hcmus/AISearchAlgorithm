@@ -9,6 +9,7 @@ from queue import Queue, PriorityQueue
 import sys
 import pygame.camera
 
+
 def BFS(win, draw, grid , start: Spot, exit: Spot):
     queue = [(start,[start])]
     visited = []
@@ -30,7 +31,8 @@ def BFS(win, draw, grid , start: Spot, exit: Spot):
         pygame.image.save(win, "tmp_image/" + str(count) + ".png")
     if(queue or currentVertex == exit):
         reconstruct_path(win, path, draw)
-    return []
+        return 1,len(path) 
+    return 0,0
 
 
 def DFS(win, draw, grid , start: Spot, exit: Spot):
@@ -55,7 +57,8 @@ def DFS(win, draw, grid , start: Spot, exit: Spot):
             count +=1
     if(stack or currentVertex == exit):
         reconstruct_path(win, path, draw)
-    return []
+        return 1,len(path) 
+    return 0,0
 
 
 def UCS(win, draw, grid, start: Spot, exit: Spot, weigh = None):
@@ -63,7 +66,7 @@ def UCS(win, draw, grid, start: Spot, exit: Spot, weigh = None):
     priorQ.put((0,(start,[start])))
     visited = []
     count = 0
-    while(priorQ):
+    while(priorQ.qsize()):
         w, (currentVertex, path) = priorQ.get()
         visited.append(currentVertex)
         if(currentVertex!=start):
@@ -73,47 +76,47 @@ def UCS(win, draw, grid, start: Spot, exit: Spot, weigh = None):
             break
         for neig in currentVertex.neighbours:
             if neig not in visited:
-                #cost = w + weigh[currentVertex][neig]
                 cost = 0
                 priorQ.put((cost, (neig, path + [neig])))
                 neig.make_open()
                 count+=1
         draw()
         pygame.image.save(win, "tmp_image/" + str(count) + ".png")
+        #infinity loop
 
-    if(priorQ or currentVertex == exit):
+    if(priorQ.qsize() or currentVertex == exit):
         reconstruct_path(win, path, draw)
-        return True
-    return False
+        return 1,len(path) 
+    return 0,0
 
 def GBFS(win, draw, grid, start: Spot, exit: Spot, H):
     priorQ = PriorityQueue() 
     priorQ.put( (0, (start, [start])) )
     visited = []
-
-    while priorQ:
+    count = 0
+    while priorQ.qsize():
         #get top and make closed (if possible)
         _, ( currentVertex, path ) = priorQ.get() 
         if currentVertex != start:
             currentVertex.make_closed()
         if currentVertex == exit:
             break        
-        count = 0
+        
         for neig in currentVertex.neighbours:
             #if neighbour is a valid vertex
-            if ( neig not in visited ) and ( neig not in priorQ ):
+            if ( neig not in visited ):
                 cost = H(neig, exit)
-                priorQ.put( cost, ( neig, path + [neig] ) )
+                priorQ.put( ( cost, ( neig, path + [neig] ) ) )
                 neig.make_open()
                 visited.append(neig)
         draw()
         pygame.image.save(win, "tmp_image/" + str(count) + ".png")
         count+=1
 
-    if not priorQ.empty() or currentVertex == exit:
+    if priorQ.qsize() or currentVertex == exit:
         reconstruct_path(win, path, draw)
-        return True
-    return False
+        return 1,len(path) 
+    return 0,0
 
 
 def Astar(win, draw, grid, start: Spot, exit: Spot, H):
@@ -169,5 +172,5 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, H):
 
     if not priorQ.empty() or currentVertex == exit:
         reconstruct_path(win, path, draw)
-        return True
-    return False
+        return 1,len(path) 
+    return 0,0

@@ -8,3 +8,4 @@ pip install pygame
 pip install numpy
 
 python3 source/main.py
+rmdir /s source/__pycache__
