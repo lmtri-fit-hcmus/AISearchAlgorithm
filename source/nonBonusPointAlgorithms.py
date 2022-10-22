@@ -77,9 +77,9 @@ def UCS(win, draw, grid, start: Spot, exit: Spot, weigh = None):
                 cost = 0
                 priorQ.put((cost, (neig, path + [neig])))
                 neig.make_open()
-                draw()
                 count+=1
-            pygame.image.save(win, "tmp_image/" + str(count) + ".png")
+        draw()
+        pygame.image.save(win, "tmp_image/" + str(count) + ".png")
 
     if(priorQ or currentVertex == exit):
         reconstruct_path(win, path, draw)

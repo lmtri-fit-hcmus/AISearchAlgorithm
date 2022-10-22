@@ -3,7 +3,7 @@
 echo Initialize python library
 
 python3 -m pip install --upgrade pip
-pip install moviepy.editor
+pip install moviepy
 pip install pygame
 pip install numpy
 

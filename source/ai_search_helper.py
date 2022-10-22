@@ -52,6 +52,8 @@ def nonBonusStart():
 
         output_path = LEVEL1_OUTPUT_PATH + '/' + i.split('.')[0]
 
+        if not os.path.exists('output'):
+            os.mkdir('output')
         if not os.path.exists(LEVEL1_OUTPUT_PATH):
             os.mkdir(LEVEL1_OUTPUT_PATH)
         if not os.path.exists(output_path):
