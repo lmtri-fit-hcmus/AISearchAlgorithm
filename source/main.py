@@ -3,8 +3,8 @@ from ai_search_helper import *
 
 def SearchAlgorithmVisual():
     #init D
-    file_name = LEVEL3_INPUT_PATH + '/' + 'input1.txt'
-    bonus_points, matrix = read_file_pick_up(file_name)
+    file_name = LEVEL2_INPUT_PATH + '/' + 'input3.txt'
+    bonus_points, matrix = read_file(file_name)
     ROWS = len(matrix)
     COLS = len(matrix[0])
 
