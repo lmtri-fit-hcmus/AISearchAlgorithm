@@ -14,7 +14,11 @@ def heuristic_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_poi
     currentPoint=Spot(bonus_point[1], bonus_point[0], exit.width, exit.row,exit.col)
     return H(start, currentPoint) + H(currentPoint,exit) + bonus_point[2]
 
-def Astar_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points):
+def Astar_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, _bonus_points):
+
+    bonus_points = []
+    for i in _bonus_points:
+        bonus_points.append(i)
     priorQ = PriorityQueue()
     priorQ.put((0, (start, [start])))
     
@@ -85,12 +89,12 @@ def Astar_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points)
             # Nếu điểm hàng xóm đang xét chưa đi qua, hoặc chi phí mới để đạt đến điểm hiện tại nhỏ hơn chi phí
             # đã tính trước đây thì thực hiện cập nhật chi phí mới
             if neig not in visited or newCost < costSoFar[neig]:
-                if neig not in priorQ.queue:
+                if not neig.is_closed(): 
                     neig.make_open()
                 costSoFar[neig] = newCost
                 
                 priority = heuristicCost + costSoFar[neig]
-                print("Priority "+str(priority))
+                #print("Priority "+str(priority))
                 priorQ.put( (priority, (neig, path + [neig] )))
                 visited.append(neig)
 
@@ -99,7 +103,7 @@ def Astar_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points)
             pygame.image.save(win, "tmp_image/" + str(count) + ".png")
             count+=1
         bonusScore = bonusScore + bonus
-        print("________")
+        #print("________")
 
     if not priorQ.empty():
         reconstruct_path(win, path, draw)
@@ -107,7 +111,10 @@ def Astar_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points)
     return 0, 0
 
 
-def GBFS_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points):
+def GBFS_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, _bonus_points):
+    bonus_points = []
+    for i in _bonus_points:
+        bonus_points.append(i)
     priorQ = PriorityQueue()
     priorQ.put((0, (start, [start])))
     
@@ -125,6 +132,8 @@ def GBFS_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points):
         # Nếu đã tìm đến điểm kết thúc thì dừng tìm kiếm và chuyển sang bước in đường đi
         if(currentVertex == exit):
             break
+        if currentVertex.row == 1 and currentVertex.col == 14:
+            print(1)
         if currentVertex != start:
             currentVertex.make_closed()
             
@@ -144,17 +153,17 @@ def GBFS_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points):
             heuristicCost =  H(neig,exit)
             for j in range(0,len(bonus_points)):
                 heuristicCurrentCost = heuristic_bonus_point(win, draw, grid, neig , exit, H, bonus_points[j])
-                print("Calculator : "+str(heuristicCurrentCost))
+                #print("Calculator : "+str(heuristicCurrentCost))
                 # Nếu tìm ra đường đi được dự đoán tốt hơn đi thẳng đến đích thì gán nó là đường đi ưu tiên
                 # Sau bước này, ta sẽ tìm ra đường đi được dự đoán là tốt nhất
                 if(heuristicCurrentCost < heuristicCost):
                     heuristicCost = heuristicCurrentCost
-            print("("+str(neig.x/currentVertex.width)+","+str(neig.y/currentVertex.width)+")")
-            print("Heuristic "+str(heuristicCost))
+            #print("("+str(neig.x/currentVertex.width)+","+str(neig.y/currentVertex.width)+")")
+            #print("Heuristic "+str(heuristicCost))
             # Nếu điểm hàng xóm đang xét chưa đi qua, hoặc chi phí mới để đạt đến điểm hiện tại nhỏ hơn chi phí
             # đã tính trước đây thì thực hiện cập nhật chi phí mới
-            if neig not in visited:
-                if neig not in priorQ.queue:
+            if neig not in visited :
+                if not neig.is_closed():
                     neig.make_open()
                 priority = heuristicCost
 
@@ -164,7 +173,7 @@ def GBFS_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points):
             draw()
             pygame.image.save(win, "tmp_image/" + str(count) + ".png")
             count+=1
-            print("+++++"+str(count)+"+++++")
+            #print("+++++"+str(count)+"+++++")
         # bonusScore = bonusScore + bonus
 
     if not priorQ.empty() or currentVertex == exit:
