@@ -51,7 +51,7 @@ class Spot:
         return self.colour == BLACK
 
     def is_start(self):
-        return self.colour == YELLOW
+        return self.colour == ORANGE
 
     def is_end(self):
         return self.colour == RED
@@ -117,7 +117,8 @@ def reconstruct_path(win, came_from: list, draw):
     for current in came_from:
         current = came_from[len(came_from)-1-i]
         #print((current.row, current.col))
-        current.make_path()
+        if i != 0 and i!=len(came_from)-1:
+            current.make_path()
         draw()
         pygame.image.save(win, "tmp_image/" + str(i) + "_.png")
         i+=1
