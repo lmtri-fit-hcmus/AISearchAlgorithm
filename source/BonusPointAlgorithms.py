@@ -14,7 +14,7 @@ def heuristic_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_poi
     currentPoint=Spot(bonus_point[1], bonus_point[0], exit.width, exit.row,exit.col)
     return H(start, currentPoint) + H(currentPoint,exit) + bonus_point[2]
 
-def Astar_bunus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points):
+def Astar_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points):
     priorQ = PriorityQueue()
     priorQ.put((0, (start, [start])))
     
@@ -107,7 +107,7 @@ def Astar_bunus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points)
     return 0, 0
 
 
-def GBFS_bunus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points):
+def GBFS_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_points):
     priorQ = PriorityQueue()
     priorQ.put((0, (start, [start])))
     
