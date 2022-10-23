@@ -19,6 +19,7 @@ def BFS(win, draw, grid , start: Spot, exit: Spot):
         if(currentVertex!=start):
             currentVertex.make_closed()
         if currentVertex == exit:
+            currentVertex.make_end()
             break
         for neig in currentVertex.neighbours:
             if neig not in visited:
@@ -46,12 +47,14 @@ def DFS(win, draw, grid , start: Spot, exit: Spot):
             currentVertex.make_closed()
         if(currentVertex not in visited):
             if currentVertex == exit:
+                currentVertex.make_end()
                 break
             visited.append(currentVertex)
             for neig in currentVertex.neighbours:
                 if(neig not in visited):
                     stack.append((neig,path+[neig]))
-                    neig.make_open()
+                    if not neig.is_start():
+                        neig.make_open()
                     draw()  
             pygame.image.save(win, "tmp_image/" + str(count) + ".png")
             count +=1
@@ -73,12 +76,14 @@ def UCS(win, draw, grid, start: Spot, exit: Spot, weigh = None):
             currentVertex.make_closed()
         count+=1
         if(currentVertex == exit):
+            currentVertex.make_end()
             break
         for neig in currentVertex.neighbours:
             if neig not in visited:
                 cost = 0
                 priorQ.put((cost, (neig, path + [neig])))
-                neig.make_open()
+                if not neig.is_start():
+                    neig.make_open()
                 count+=1
         draw()
         pygame.image.save(win, "tmp_image/" + str(count) + ".png")
@@ -100,6 +105,7 @@ def GBFS(win, draw, grid, start: Spot, exit: Spot, H):
         if currentVertex != start:
             currentVertex.make_closed()
         if currentVertex == exit:
+            currentVertex.make_end()
             break        
         
         for neig in currentVertex.neighbours:
@@ -107,7 +113,8 @@ def GBFS(win, draw, grid, start: Spot, exit: Spot, H):
             if ( neig not in visited ):
                 cost = H(neig, exit)
                 priorQ.put( ( cost, ( neig, path + [neig] ) ) )
-                neig.make_open()
+                if not neig.is_start():
+                    neig.make_open()
                 visited.append(neig)
         draw()
         pygame.image.save(win, "tmp_image/" + str(count) + ".png")
@@ -131,6 +138,7 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, H):
         _, (currentVertex, path) = priorQ.get()
         # Nếu điểm đang xác là điểm kết thúc thì dừng
         if(currentVertex == exit):
+            currentVertex.make_end()
             break
         
         # Thực hiện đánh đáu điểm đang xét là 'đã đi qua'
@@ -144,7 +152,8 @@ def Astar(win, draw, grid, start: Spot, exit: Spot, H):
             # Nếu điểm hàng xóm đã được đi qua hoặc tìm ra con đường ngắn hơn đi đến điểm hàng xóm
             # Thì thực hiện mở các ô cạnh nó
             if neig not in visited or newCost < costSoFar[neig]:
-                neig.make_open()
+                if neig!=start:
+                    neig.make_open()
                 
                 # Cập nhật độ dài con đường đến điểm hàng xóm
                 costSoFar[neig] = newCost
