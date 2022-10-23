@@ -6,8 +6,8 @@
 20 32 -6
 17 21 -3
 4 33 -15
-3 18 -5
-28 5 -4
+18 3 -5
+5 28 -4
 12 18 -9
 xxxxxxxxxxxxxxxxxxxxxxxx
 x       xx             x
