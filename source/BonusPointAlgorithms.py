@@ -15,10 +15,16 @@ def heuristic_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, bonus_poi
     return H(start, currentPoint) + H(currentPoint,exit) + bonus_point[2]
 
 def Astar_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, _bonus_points):
-
+    isPickUp = 0
+    value = -200
     bonus_points = []
-    for i in _bonus_points:
-        bonus_points.append(i)
+    if(len(_bonus_points[0])==2):
+        for i in _bonus_points:
+            bonus_points.append((i[0],i[1],value))
+        isPickUp = 1
+    else:
+        for i in _bonus_points:
+            bonus_points.append(i)
     priorQ = PriorityQueue()
     priorQ.put((0, (start, [start])))
     
@@ -104,9 +110,12 @@ def Astar_bonus_point(win, draw, grid, start: Spot, exit: Spot, H, _bonus_points
             count+=1
         bonusScore = bonusScore + bonus
         #print("________")
-
+    
     if not priorQ.empty():
         reconstruct_path(win, path, draw)
+        if(isPickUp):
+            bonusScore = bonusScore - (len(_bonus_points)-len(bonus_points))*value
+        
         return 1, (len(path) + bonusScore)
     return 0, 0
 
